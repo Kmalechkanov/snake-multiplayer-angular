@@ -6,6 +6,7 @@ import { fromEvent } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Background } from './classes/background';
 import { Snake } from './classes/snake';
+import { Apple } from './classes/apple';
 
 @Component({
   selector: 'app-game',
@@ -33,6 +34,7 @@ export class GameComponent implements OnInit {
       });
 
       this.playgrounds.push(new Background(this.canvasSize,this.size));
+      this.playgrounds.push(new Apple(this.canvasSize,this.size));
       this.playgrounds.push(new Snake());
       this.initControls();
     });
@@ -42,9 +44,12 @@ export class GameComponent implements OnInit {
 
   initControls() {
     for (let i = 0; i < this.playgrounds.length; i++) {
-      const actor = this.playgrounds[i];
-      this.app.stage.addChild(actor);
-      this.app.ticker.add((e:any) => actor.update(e));
+      const playground = this.playgrounds[i];
+      debugger;
+      this.app.stage.addChild(playground);
+      this.app.ticker.add((e:any) => {
+        playground.update(e);
+      });
     }
 
     fromEvent(document, 'keydown')

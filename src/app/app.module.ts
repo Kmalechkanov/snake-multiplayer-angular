@@ -7,6 +7,16 @@ import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
 import { GameComponent } from './components/game/game.component';
 import { StatsComponent } from './components/stats/stats.component';
+import { TableComponent } from './components/playground/table.component';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+
+const config: SocketIoConfig = {
+	// url: environment.socketUrl, // socket server url;
+  url: '192.168.0.229:3200',
+	options: {
+		transports: ['websocket']
+	}
+}
 
 @NgModule({
   declarations: [
@@ -14,11 +24,13 @@ import { StatsComponent } from './components/stats/stats.component';
     HeaderComponent,
     HomeComponent,
     StatsComponent,
-    GameComponent
+    GameComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    SocketIoModule.forRoot(config)
   ],
   providers: [],
   bootstrap: [AppComponent]

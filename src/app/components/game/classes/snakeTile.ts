@@ -32,19 +32,13 @@ export class SnakeTile extends Playground {
 		this.position.y = worldPosition.y;
 	}
 
-	smoothUpdate(delta: number) {
-    var speed = 60 / 1000;
-    var position = this.getWorldPosition();
-    this.position.x = this.lerp(this.position.x, position.x, speed * delta);
-    this.position.y = this.lerp(this.position.y, position.y, speed * delta);
-  }
-
 	override update() {
     if (!this.next) {
-      this.tileX += this.directionX;
+			//head
+			this.tileX += this.directionX;
       this.tileY += this.directionY;
     } else {
-      this.tileX = this.next.tileX;
+			this.tileX = this.next.tileX;
       this.tileY = this.next.tileY;
     }
 
@@ -54,6 +48,7 @@ export class SnakeTile extends Playground {
   }
 
 	getWorldPosition() {
+		//should change that to be dynamic
 		var tileSize = 500/15;
 		return { x: (this.tileX * tileSize) + this.radius, y: (this.tileY * tileSize) + this.radius };
 	}

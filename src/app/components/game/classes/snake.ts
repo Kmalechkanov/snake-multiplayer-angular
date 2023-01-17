@@ -5,7 +5,7 @@ import { HashTable } from "./IHashTable";
 
 export class Snake extends Playground {
 	private lastUnix: number = 0;
-  private threshold: number = 100;
+  private threshold: number = 1000;
 
 	private directionMap: HashTable<Direction> = {};
 
@@ -21,7 +21,7 @@ export class Snake extends Playground {
     }
 	}
 
-	override update(delta: number) {
+	override update() {
 		var currentUnix = performance.now();
     var canResetUnix = false;
     for (let i = 0; i < this.children.length; i++) {

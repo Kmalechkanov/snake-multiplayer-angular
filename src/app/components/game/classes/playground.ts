@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { Apple } from './apple';
 import { SnakeTile } from './snakeTile';
 
 export abstract class Playground extends PIXI.Graphics {
@@ -15,9 +16,5 @@ export abstract class Playground extends PIXI.Graphics {
 
   onKeyup(e: KeyboardEvent) {
 
-  }
-
-  lerp(start: number, end: number, amt: number) {
-    return (1 - amt) * start + amt * end
   }
 }
