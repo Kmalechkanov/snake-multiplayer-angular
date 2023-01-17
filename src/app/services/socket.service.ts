@@ -32,6 +32,22 @@ export class SocketService {
         this.socket.emit('getSnakes');
     }
 
+    emitResetGame(): void {
+        this.socket.emit('resetGame');
+    }
+
+    onResetGame(): Observable<any> {
+        return this.socket.fromEvent('resetGame');
+    }
+    
+    emitDisconnectGame(): void {
+        this.socket.emit('disconnectGame');
+    }
+
+    onDisconnectGame(): Observable<any> {
+        return this.socket.fromEvent('disconnectGame');
+    }
+
     onGetApples(): Observable<any> {
         return this.socket.fromEvent('getApples').pipe(take(1));
     }

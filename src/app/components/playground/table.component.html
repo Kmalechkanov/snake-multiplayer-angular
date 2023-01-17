@@ -12,4 +12,6 @@
     </li>
 </ul>
 
-<button *ngIf="!joined" (click)="joinGame()">Join Game</button>
+<button *ngIf="!joined" (click)="joinGame()">Join</button>
+<button *ngIf="joined" (click)="disconnectGame()">Disconnect</button>
+<button (click)="resetGame()">Reset Game</button>

@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
 import * as PIXI from 'pixi.js';
-import { fromEvent } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { fromEvent, Subject } from 'rxjs';
+import { takeUntil, tap } from 'rxjs/operators';
 import { HashTable } from '../game/classes/IHashTable';
 import { Direction } from './classes/directions-constants';
 import { SocketService } from 'src/app/services/socket.service';
@@ -15,7 +15,7 @@ import { Coord } from './classes/coord';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
   private app!: PIXI.Application;
   private directionMap: HashTable<Direction> = {};
   private direction: Direction = Direction.Right;
@@ -31,6 +31,7 @@ export class TableComponent implements OnInit {
   private snakes: Snake[] = [];
 
   joined: boolean = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   ngOnInit(): void {
     this.ngZone.runOutsideAngular(() => {
@@ -43,18 +44,28 @@ export class TableComponent implements OnInit {
       this.initDirections();
       this.initControls();
 
+      this.initButtonHandlers();
+
       this.loadGame();
     });
 
     this.elementRef.nativeElement.appendChild(this.app.view);
   }
 
-  joinGame() {
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
+  joinGame(): void {
     this.joined = true;
+    //todo check that destoy behavior
+    this.destroy$.next(false);
+
     this.socket.emitJoinGame();
     let bufferedDirection = Direction.Right;
 
-    this.socket.onTick().subscribe((data) => {
+    this.socket.onTick().pipe(takeUntil(this.destroy$)).subscribe((data) => {
       if (bufferedDirection !== this.direction) {
         this.socket.emitControl(this.direction);
         bufferedDirection = this.direction;
@@ -62,7 +73,19 @@ export class TableComponent implements OnInit {
     });
   }
 
-  loadGame() {
+  disconnectGame(): void {
+    this.socket.emitDisconnectGame();
+
+    this.direction = Direction.Right;
+    this.joined = false;
+    this.destroy$.next(true);
+  }
+
+  resetGame(): void {
+    this.socket.emitResetGame();
+  }
+
+  loadGame(): void {
     this.socket.onTick().subscribe(data => {
       if (data.controls) {
         this.handleControls(data.controls);
@@ -76,16 +99,11 @@ export class TableComponent implements OnInit {
       });
     });
 
-    this.socket.onJoinGame().subscribe((data: any) => {
-      console.log(data)
-      this.drawSnakes(data);
-    });
-
     this.initAppleHandlers();
     this.initSnakeHandlers();
   }
 
-  initBackground() {
+  initBackground(): void {
     const background = new PIXI.Graphics();
     background.beginFill(0x22ffff);
     var width = appConstants.cubeWidth;
@@ -99,10 +117,33 @@ export class TableComponent implements OnInit {
 
   }
 
-  initSnakeHandlers() {
+  initSnakeHandlers(): void {
     this.socket.emitGetSnakes();
     this.socket.onGetSnakes().subscribe((data: any) => {
       this.drawSnakes(data);
+    });
+  }
+
+  initButtonHandlers(): void {
+    this.socket.onJoinGame().subscribe((data: any) => {
+      this.drawSnakes(data);
+    });
+
+    this.socket.onDisconnectGame().subscribe((id: string) => {
+      this.removeSnake(id);
+    });
+
+    this.socket.onResetGame().subscribe(() => {
+      this.apples.forEach(apple => {
+        this.removeApple({ x: apple.x, y: apple.y });
+      });
+      this.snakes.forEach(snake => {
+        this.removeSnake(snake.id);
+      });
+
+      this.direction = Direction.Right;
+      this.joined = false;
+      this.destroy$.next(true);
     });
   }
 
@@ -138,7 +179,7 @@ export class TableComponent implements OnInit {
     controls: {
       [key: string]: { processed: Direction, buffer: Direction }
     }
-  }) {
+  }): void {
     let tailsAndHeads: { [key: string]: { x: number, y: number }[] } = {};
     for (const [playerId, tails] of Object.entries<{ x: number, y: number }[]>(data.tails)) {
       if (!tailsAndHeads[playerId]) {
@@ -156,12 +197,20 @@ export class TableComponent implements OnInit {
       tails.forEach(tile => {
         coords.push(new Coord(tile.x, tile.y));
       });
-      let snake = new Snake(this.app.stage, playerId, coords, data.controls[playerId].processed);
+      let snake = new Snake(this.app.stage, playerId, coords, data.controls[playerId].processed, this.randomColor());
       this.snakes.push(snake);
     }
   }
 
-  initAppleHandlers() {
+  removeSnake(playerId: string): void {
+    let snakeIndex = this.snakes.findIndex(s => s.id === playerId);
+    this.snakes[snakeIndex].tail.forEach(tile => {
+      this.app.stage.removeChild(tile.graphic);
+    });
+    this.snakes.splice(snakeIndex, 1);
+  }
+
+  initAppleHandlers(): void {
     this.socket.emitGetApples();
     this.socket.onGetApples().subscribe((apples: [{ x: number, y: number }]) => {
       apples.forEach(apple => {
@@ -176,22 +225,30 @@ export class TableComponent implements OnInit {
       this.app.stage.addChild(newApple.graphic);
     });
     this.socket.onRemoveApple().subscribe((removeApple) => {
-      let appleIndex = this.apples.findIndex(apple => apple.x === removeApple.x && apple.y === removeApple.y);
-      if (appleIndex !== -1) {
-        this.app.stage.removeChild(this.apples[appleIndex].graphic);
-        this.apples.splice(appleIndex, 1);
-      }
+      this.removeApple(removeApple);
     });
   }
 
-  initDirections() {
+  removeApple(coord: Coord): void {
+    let appleIndex = this.apples.findIndex(apple => apple.x === coord.x && apple.y === coord.y);
+    if (appleIndex !== -1) {
+      this.app.stage.removeChild(this.apples[appleIndex].graphic);
+      this.apples.splice(appleIndex, 1);
+    }
+  }
+
+  initDirections(): void {
     this.directionMap[Direction.Left] = Direction.Left;
     this.directionMap[Direction.Right] = Direction.Right;
     this.directionMap[Direction.Top] = Direction.Top;
     this.directionMap[Direction.Bottom] = Direction.Bottom;
   }
 
-  initControls() {
+  randomColor(): number {
+    return parseInt(Math.floor(Math.random()*16777215).toString(16),16);
+  }
+
+  initControls(): void {
     fromEvent(document, 'keydown')
       .pipe(tap((e: any) => {
         var direction = this.directionMap[e.keyCode];
