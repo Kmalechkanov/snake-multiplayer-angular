@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { appConstants } from 'src/app/constants/app-constants';
-import { Direction } from '../../game/classes/directions-constants';
 import { Coord } from './coord';
+import { Direction } from './directions-constants';
 import { Tile } from './tile';
 
 export class Snake {

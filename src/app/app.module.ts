@@ -5,10 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './components/header/header.component';
 import { HomeComponent } from './components/home/home.component';
-import { GameComponent } from './components/game/game.component';
 import { StatsComponent } from './components/stats/stats.component';
 import { TableComponent } from './components/playground/table.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
+import { CreditsComponent } from './components/credits/credits.component';
 
 const config: SocketIoConfig = {
 	// url: environment.socketUrl, // socket server url;
@@ -24,7 +24,7 @@ const config: SocketIoConfig = {
     HeaderComponent,
     HomeComponent,
     StatsComponent,
-    GameComponent,
+    CreditsComponent,
     TableComponent
   ],
   imports: [
@@ -33,6 +33,6 @@ const config: SocketIoConfig = {
     SocketIoModule.forRoot(config)
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, HeaderComponent]
 })
 export class AppModule { }

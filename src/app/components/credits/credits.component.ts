@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { appConstants } from 'src/app/constants/app-constants';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-credits',
+  templateUrl: './credits.component.html',
+  styleUrls: ['./credits.component.scss']
 })
-export class HomeComponent {
+export class CreditsComponent {
     title = appConstants.title;
 }

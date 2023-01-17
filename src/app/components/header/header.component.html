@@ -1,6 +1,10 @@
+
 <div class="header">
-    <h1>SNake-multiplayer</h1>
-    <p>asd</p>
-    <p>asd1</p>
-    <p>asd2</p>
+    <a href="" class="logo">{{title}}</a>
+    <div class="header-right">
+        <a [class.active]="router.url === '/home'" routerLink="/home">Home</a>
+        <a [class.active]="router.url === '/table'" routerLink="/table">Table</a>
+        <a [class.active]="router.url === '/stats'" routerLink="/stats">Statistics</a>
+        <a [class.active]="router.url === '/credits'" routerLink="/credits">Credits</a>
+    </div>
 </div>

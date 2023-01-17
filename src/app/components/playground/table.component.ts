@@ -1,14 +1,14 @@
-import { ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
-import { HashTable } from '../game/classes/IHashTable';
 import { Direction } from './classes/directions-constants';
 import { SocketService } from 'src/app/services/socket.service';
 import { Apple } from './classes/apple';
 import { appConstants } from 'src/app/constants/app-constants';
 import { Snake } from './classes/snake';
 import { Coord } from './classes/coord';
+import { HashTable } from './classes/IHashTable';
 
 @Component({
   selector: 'app-table',
@@ -23,7 +23,6 @@ export class TableComponent implements OnInit, OnDestroy {
   constructor(
     private elementRef: ElementRef,
     private ngZone: NgZone,
-    private changeDetectionRef: ChangeDetectorRef,
     private socket: SocketService
   ) { }
 
