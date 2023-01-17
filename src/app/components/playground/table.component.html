@@ -1,17 +1,27 @@
 <div style="text-align:center" class="content">
-<h2>Here are some links to help you start: Stats</h2>
-<ul>
-    <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-    </li>
-    <li>
-        <h2><a target="_blank" rel="noopener" href="https://angular.io/cli">CLI Documentation</a></h2>
-    </li>
-    <li>
-        <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-    </li>
-</ul>
+    <div class="buttons">
+        <app-button *ngIf="!joined" (click)="joinGame()" text="Join" backgroundColor="#35642e"></app-button>
+        <app-button *ngIf="joined" (click)="disconnectGame()" text="Disconnect" backgroundColor="#91143f"></app-button>
+        <app-button (click)="resetGame()" text="Reset Game" backgroundColor="#302f49"></app-button>
+    </div>
 
-<button *ngIf="!joined" (click)="joinGame()">Join</button>
-<button *ngIf="joined" (click)="disconnectGame()">Disconnect</button>
-<button (click)="resetGame()">Reset Game</button>
+    <div id="canvasDiv"></div>
+
+    <div class="controls">
+        <div class="line">
+            <div class="space"></div>
+            <app-button (click)="triggerControl(38)" text="Up" backgroundColor="#302f49"></app-button>
+            <div class="space"></div>
+        </div>
+        <div class="line">
+            <app-button (click)="triggerControl(37)" text="Left" backgroundColor="#302f49"></app-button>
+            <div class="space"></div>
+            <app-button (click)="triggerControl(39)" text="Right" backgroundColor="#302f49"></app-button>
+        </div>
+        <div class="line">
+            <div class="space"></div>
+            <app-button (click)="triggerControl(40)" text="Down" backgroundColor="#302f49"></app-button>
+            <div class="space"></div>
+        </div>
+    </div>
+</div>

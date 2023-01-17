@@ -9,6 +9,8 @@ import { StatsComponent } from './components/stats/stats.component';
 import { TableComponent } from './components/playground/table.component';
 import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 import { CreditsComponent } from './components/credits/credits.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { ButtonComponent } from './components/button/button.component';
 
 const config: SocketIoConfig = {
 	// url: environment.socketUrl, // socket server url;
@@ -22,10 +24,12 @@ const config: SocketIoConfig = {
   declarations: [
     AppComponent,
     HeaderComponent,
+    FooterComponent,
     HomeComponent,
     StatsComponent,
     CreditsComponent,
-    TableComponent
+    TableComponent,
+    ButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -33,6 +37,6 @@ const config: SocketIoConfig = {
     SocketIoModule.forRoot(config)
   ],
   providers: [],
-  bootstrap: [AppComponent, HeaderComponent]
+  bootstrap: [AppComponent, HeaderComponent, FooterComponent]
 })
 export class AppModule { }

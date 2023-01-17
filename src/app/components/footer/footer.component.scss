@@ -1,0 +1,60 @@
+:host {
+  margin-top: auto;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #302f49;
+  // background-color: #d1d1d1;
+  padding: 10px 80px;
+
+  .copy {
+    color: #fff;
+  }
+
+  .bottom-links {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px 0;
+    width: 80%;
+
+    .links {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 40px;
+
+      .active {
+        border-bottom: 1px dashed white;
+      }
+
+      span {
+        font-size: 20px;
+        color: #fff;
+        text-transform: uppercase;
+        margin: 10px 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: #a1a1a1;
+        padding: 10px 20px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .footer {
+    display: block;
+    text-align: left;
+
+    .bottom-links {
+      display: block;
+    }
+  }
+}

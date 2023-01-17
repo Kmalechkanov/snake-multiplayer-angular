@@ -1,4 +1,4 @@
-import { Component, ElementRef, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, NgZone, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import * as PIXI from 'pixi.js';
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -23,7 +23,8 @@ export class TableComponent implements OnInit, OnDestroy {
   constructor(
     private elementRef: ElementRef,
     private ngZone: NgZone,
-    private socket: SocketService
+    private socket: SocketService,
+    private renderer: Renderer2
   ) { }
 
   private apples: Apple[] = [];
@@ -48,10 +49,14 @@ export class TableComponent implements OnInit, OnDestroy {
       this.loadGame();
     });
 
-    this.elementRef.nativeElement.appendChild(this.app.view);
+    this.renderer.appendChild(document.getElementById('canvasDiv'), this.app.view);
   }
 
   ngOnDestroy(): void {
+    if (this.joined) {
+      this.disconnectGame();
+    }
+
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
@@ -73,11 +78,29 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   disconnectGame(): void {
+    this.saveToSession();
     this.socket.emitDisconnectGame();
 
     this.direction = Direction.Right;
     this.joined = false;
     this.destroy$.next(true);
+
+    let gamesPlayed = localStorage.getItem('gamesPlayed') || 0;
+    localStorage.setItem('gamesPlayed', (Number(gamesPlayed) + 1).toString());
+  }
+
+  saveToSession(): void {
+    let maxLength = localStorage.getItem('maxLength') || 0;
+    let totalLength = localStorage.getItem('totalLength') || 0;
+    let totalApples = localStorage.getItem('totalApples') || 0;
+
+    //this is not the right snake
+    if (maxLength > 0) {
+      maxLength = 0;
+      localStorage.setItem('maxLength', maxLength.toString());
+    }
+    localStorage.setItem('totalLength', totalLength.toString());
+    localStorage.setItem('totalApples', totalApples.toString());
   }
 
   resetGame(): void {
@@ -143,6 +166,9 @@ export class TableComponent implements OnInit, OnDestroy {
       this.direction = Direction.Right;
       this.joined = false;
       this.destroy$.next(true);
+
+      let resetedGames = localStorage.getItem('resetedGames') || 0;
+      localStorage.setItem('resetedGames', (Number(resetedGames) + 1).toString());
     });
   }
 
@@ -244,7 +270,7 @@ export class TableComponent implements OnInit, OnDestroy {
   }
 
   randomColor(): number {
-    return parseInt(Math.floor(Math.random()*16777215).toString(16),16);
+    return parseInt(Math.floor(Math.random() * 16777215).toString(16), 16);
   }
 
   initControls(): void {
@@ -262,5 +288,9 @@ export class TableComponent implements OnInit, OnDestroy {
       .pipe(tap((e: any) => {
 
       })).subscribe();
+  }
+
+  triggerControl(direction: Direction): void {
+    this.direction = direction;
   }
 }

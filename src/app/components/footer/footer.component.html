@@ -1,0 +1,16 @@
+<footer class="footer">
+    <div class="copy">&copy; 2022 F105148</div>
+    <div class="bottom-links">
+        <div class="links">
+            <span>Some Links</span>
+
+            <a [class.active]="router.url === '/home'" routerLink="/home">Home</a>
+            <a [class.active]="router.url === '/table'" routerLink="/table">Table</a>
+            <a [class.active]="router.url === '/stats'" routerLink="/stats">Statistics</a>
+            <a [class.active]="router.url === '/credits'" routerLink="/credits">Credits</a>
+        </div>
+        <div class="links">
+            <span>Social Links</span>
+        </div>
+    </div>
+</footer>

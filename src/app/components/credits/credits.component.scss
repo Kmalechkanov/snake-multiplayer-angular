@@ -1,0 +1,50 @@
+h1 {
+    text-align: center;
+}
+.side {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    .line {
+        width: 40%;
+        padding-left: 5%;
+        padding-top: 25px;
+        padding-bottom: 20px;
+
+        div {
+            font-size: 20px;
+            display: flex;
+            padding-left: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        a:hover {
+            font-size: 20px;
+            display: flex;
+            padding-left: 20px;
+            padding-right: 10px;
+            background-color: rgba(87, 230, 122, 0.295);
+            border-bottom-right-radius: 10px;
+        }
+
+        img {
+            width: 25px;
+            border-radius: 3px;
+        }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .side {
+        text-align: center;
+        .line {
+            width: 100%;
+            padding-left: 50px;
+        }
+    }
+}

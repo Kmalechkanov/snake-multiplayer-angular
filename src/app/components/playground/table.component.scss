@@ -1,0 +1,37 @@
+.buttons {
+    display: flex;
+    width: 100%;
+    app-button {
+        width: 50%;
+    }
+}
+
+.controls {
+    display: block;
+    width: 100%;
+    .line {
+        display: flex;
+        width: 100%;
+        .space {
+            display: flex;
+            width: 33%;
+        }
+        app-button {
+            width: 33%;
+        }
+    }
+}
+
+#canvasDiv {
+    margin-left: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .buttons {
+        display: block;
+
+        app-button {
+            width: 100%;
+        }
+    }
+}
