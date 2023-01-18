@@ -12,6 +12,14 @@ export class SocketService {
         this.socket.emit('controls', direction);
     }
 
+    emitGetId(): void {
+        this.socket.emit('getId');
+    }
+
+    onGetId(): Observable<any> {
+        return this.socket.fromEvent('getId');
+    }
+
     emitJoinGame(): void {
         this.socket.emit('join');
     }

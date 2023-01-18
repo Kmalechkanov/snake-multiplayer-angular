@@ -29,6 +29,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
   private apples: Apple[] = [];
   private snakes: Snake[] = [];
+  private id: string = "";
 
   joined: boolean = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -40,6 +41,7 @@ export class TableComponent implements OnInit, OnDestroy {
         height: appConstants.canvasSize
       });
 
+      this.getId();
       this.initBackground();
       this.initDirections();
       this.initControls();
@@ -125,6 +127,13 @@ export class TableComponent implements OnInit, OnDestroy {
     this.initSnakeHandlers();
   }
 
+  getId(): void {
+    this.socket.emitGetId();
+    this.socket.onGetId().pipe(takeUntil(this.destroy$)).subscribe((id) => {
+      this.id = id;
+    });
+  }
+
   initBackground(): void {
     const background = new PIXI.Graphics();
     background.beginFill(0x22ffff);
@@ -153,6 +162,16 @@ export class TableComponent implements OnInit, OnDestroy {
 
     this.socket.onDisconnectGame().subscribe((id: string) => {
       this.removeSnake(id);
+      if (this.id === id) {
+        this.saveToSession();
+
+        this.direction = Direction.Right;
+        this.joined = false;
+        this.destroy$.next(true);
+
+        let gamesPlayed = localStorage.getItem('gamesPlayed') || 0;
+        localStorage.setItem('gamesPlayed', (Number(gamesPlayed) + 1).toString());
+      }
     });
 
     this.socket.onResetGame().subscribe(() => {
